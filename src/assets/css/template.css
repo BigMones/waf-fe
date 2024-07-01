@@ -1,0 +1,205 @@
+.container {
+  display: flex;
+}
+
+.content-left {
+  display: flex;
+  background-color: black;
+  height: 1500px;
+  width: 1500px;
+  transform: rotate(25deg);
+  border-radius: 0px 150px 0px 0px;
+  top: -150px;
+  right: 770px;
+  border: 4px solid white;
+  position: absolute;
+}
+
+.content-right {
+  height: 1500px;
+  width: 1500px;
+  transform: rotate(335deg);
+  border-radius: 150px 0px 0px 0px;
+  top: -150px;
+  left: 770px;
+  border: 4px solid white;
+  position: relative;
+}
+
+.content {
+  border-radius: "150px 0px 0px 0px";
+}
+
+.smallLogo {
+  top: -300px;
+  right: 1250px;
+  height: 90px;
+  width: 90px;
+  position: absolute;
+}
+
+.welcome {
+  font-size: 90px;
+  right: 910px;
+  top: -100px;
+  font-weight: 700;
+  position: absolute;
+}
+
+.loginText {
+  font-size: 70px;
+  font-weight: 700;
+  right: 1320px;
+  position: absolute;
+  top: 100px;
+}
+
+.innn {
+  font-size: 90px;
+  right: 820px;
+  top: -100px;
+  font-weight: 700;
+  position: absolute;
+}
+
+.bigLogo {
+  right: 500px;
+  bottom: -120px;
+  position: absolute;
+}
+
+.bigLogo1 {
+  position: absolute;
+  width: 20% ;
+  right: 1010px;
+  top: 138px;
+}
+
+.synopsis {
+  right: 590px;
+  width: 750px;
+  height: 10px;
+  top: 140px;
+  position: absolute;
+}
+
+.synopsis2 {
+  font-size: 30px;
+  text-align: left;
+  justify-content: center;
+}
+
+.btn-round {
+  top: 310px;
+  position: absolute;
+  right: 1075px;
+  width: 30%;
+  border-radius: 150px;
+}
+
+
+
+.btn-block.first {
+  top: 250px;
+  right: 850px;
+  position: absolute;
+  width: 50%;
+}
+
+.btn-block.second {
+  top: 350px;
+  right: 850px;
+  position: absolute;
+  width: 50%;
+}
+
+.btn-block.third {
+  top: 740px;
+  position: absolute;
+  right: 850px;
+  width: 50%;
+}
+
+.btn-round.account {
+  top: 910px;
+  position: absolute;
+  right: 1030px;
+  width: 50%;
+}
+.btn-round.account2 {
+  top: 910px;
+  position: absolute;
+  right: 1230px;
+  width: 50%;
+}
+
+.form{
+  top: 510px;
+  position: absolute;
+  right: 850px;
+}
+
+.form2{
+  top: 610px;
+  position: absolute;
+  right: 850px;
+  
+}
+
+.formnew1{
+  top: 310px;
+  position: absolute;
+  right: 850px;
+  
+}
+
+.formnew2{
+  top: 410px;
+  position: absolute;
+  right: 850px;
+  
+}
+
+.formnew3{
+  top: 510px;
+  position: absolute;
+  right: 850px;
+}
+.formnew4{
+  top: 610px;
+  position: absolute;
+  right: 850px;
+}
+.formnew5{
+  top: 710px;
+  position: absolute;
+  right: 850px;
+}
+.formnew6{
+  top: 810px;
+  position: absolute;
+  right: 850px;
+}
+
+/* File: styles.css */
+.input-white-placeholder::placeholder {
+  color: white;
+  opacity: 1; /* Per assicurarsi che il colore sia completamente visibile */
+}
+
+.input-white-placeholder:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+.input-white-placeholder::-ms-input-placeholder { /* Microsoft Edge */
+  color: white;
+}
+
+
+
+
+
+
+
+
+ 
