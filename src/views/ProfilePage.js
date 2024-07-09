@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import Header from '../components/HomePage/Header'; // Assicurati di importare il componente Header
 import logo from '../assets/img/logowaf.png'; // Assicurati di aggiornare il percorso
 import Footer from '../components/HomePage/Footer.js';
 import DailyUsageChart from '../components/ProfilePage/DailyUsageChart'; // Assicurati di aggiornare il percorso
 import PersonalPreferences from '../components/ProfilePage/PersonalPreferences'; // Assicurati di aggiornare il percorso
+import { decodeToken } from '../utils/jwt'; // Import the decodeToken utility
+import variable from "../assets/global/variable.json";
 
 const ProfileWrapper = styled.div`
   padding: 2rem;
@@ -150,40 +153,75 @@ const preferencesData = [
   { name: 'Acquisti online', level: 90 },
 ];
 
-const ProfilePage = () => (
-  <>
-    <Header />
-    <ProfileWrapper>
-      <ProfileHeader>
-        <UserInfo>
-          <UserName>LAURA ROSSI</UserName>
-          <UserLevel>WAF LEVEL 70/100</UserLevel>
-        </UserInfo>
-        <Logo src={logo} alt="Logo" />
-      </ProfileHeader>
-      <ProfileContent>
-        <ProfileLeft>
-          <ProfileCard>
-            <ProfileImage src="https://via.placeholder.com/150" alt="Profile" />
-          </ProfileCard>
-          <ProfileInfo>
-            <InfoTitle>ACCOUNT INFO</InfoTitle>
-            <InfoText>Age range: 20-30</InfoText>
-            <InfoText>Login: Web 3</InfoText>
-            <InfoText>Abbonamento: Premium</InfoText>
-            <Textarea placeholder="Scrivi la tua bio..." rows="4"></Textarea>
-          </ProfileInfo>
-        </ProfileLeft>
-        <PersonalPreferences preferences={preferencesData} />
-      </ProfileContent>
-      <DailyUsageChart />
-      <ButtonContainer>
-        <CancelButton>ANNULLA ABBONAMENTO</CancelButton>
-        <LogoutButton>LOGOUT</LogoutButton>
-      </ButtonContainer>
-    </ProfileWrapper>
-    <Footer />
-  </>
-);
+const ProfilePage = () => {
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [id,setID]= useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+
+      const decoded = decodeToken(token);
+      setID(decoded.id);
+  }, []);
+console.log("ID: "+id)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+      const response = await axios.post(variable["base-be-url"] + "/api/v2/user", {id});
+      console.log(response)
+        setUserData(response.data.rows[0]);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading user data</p>;
+  }
+
+  return (
+    <>
+      <Header />
+      <ProfileWrapper>
+        <ProfileHeader>
+          <UserInfo>
+            <UserName>{userData.username}</UserName>
+            <UserLevel>WAF LEVEL USERNAME/100</UserLevel>
+          </UserInfo>
+        </ProfileHeader>
+        <ProfileContent>
+          <ProfileLeft>
+            <ProfileCard>
+              <ProfileImage  alt="Profile" />
+            </ProfileCard>
+            <ProfileInfo>
+              <InfoTitle>ACCOUNT INFO: {userData.descrizione}</InfoTitle>
+              <InfoText>Login: USERNAME</InfoText>
+              <InfoText>Abbonamento: USERNAME</InfoText>
+              <Textarea placeholder="Scrivi la tua bio..." rows="4" ></Textarea>
+            </ProfileInfo>
+          </ProfileLeft>
+          <PersonalPreferences preferences={preferencesData} />
+        </ProfileContent>
+        <DailyUsageChart />
+        <ButtonContainer>
+          <CancelButton>ANNULLA ABBONAMENTO</CancelButton>
+          <LogoutButton>LOGOUT</LogoutButton>
+        </ButtonContainer>
+      </ProfileWrapper>
+      <Footer />
+    </>
+  );
+};
 
 export default ProfilePage;

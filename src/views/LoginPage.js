@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { Button, Input, Alert } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,13 +17,13 @@ function LoginPage() {
   const handleCreateAccountClick = () => {
     setShowCreateAccount(true);
   };
-
   const loginCheck = async () => {
     try {
       const response = await axios.post(variable["base-be-url"] + "/api/v2/login", { username, password });
-      if (response.status === 200 && response.data.rowCount == 1) {
+      if (response.status === 200 && response.data.rowCount === 1) {
         console.log("Login Successful", response.data);
-        navigate("/home-page");
+        localStorage.setItem('jwtToken', response.data.rows[0].token);
+        navigate("/profile-page");
       } else {
         setErrorMessage("Login failed. Please check your username and password.");
       }
@@ -34,20 +34,57 @@ function LoginPage() {
   };
 
   const registerAccount = async () => {
-
     try {
       const response = await axios.post(variable["base-be-url"] + "/api/v2/register", { username, mail, descrizione, ruolo, password });
-      if (response.status === 200 && response.data.rowCount == 1) {
+      if (response.status === 200 && response.data.rowCount === 1) {
         console.log("Registrazione avvenuta con successo", response.data);
         navigate("/home-page");
       } else {
-        setErrorMessage("Uno o piú parametri sono errati.");
+        setErrorMessage("Uno o più parametri sono errati.");
       }
     } catch (error) {
-      setErrorMessage("Uno o piú parametri sono errati.");
+      setErrorMessage("Uno o più parametri sono errati.");
       console.error(error);
     }
   }
+
+  const connectPhantomWallet = async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const response = await window.solana.connect();
+        const pubkey = response.publicKey.toString();
+        console.log("Connected with public key:", pubkey);
+
+        // Perform login or registration using the public key
+        const loginResponse = await axios.post(variable["base-be-url"] + "/api/v2/login", { pubkey });
+        console.log("PRE LOGIN")
+        if (loginResponse.status === 200 && loginResponse.data.rowCount === 1) {
+          const token = loginResponse.data.rows[0].token;
+          console.log("LOGIN SE PUB KEY PRESENTE")
+          console.log("Phantom Wallet Login Successful", loginResponse.data.rows[0].token);
+        
+          localStorage.setItem('jwtToken', loginResponse.data.rows[0].token);
+          navigate("/home-page");
+        } else if(loginResponse.status === 200 && loginResponse.data.rowCount === 0) {
+          console.log("LOGIN SE PUB KEY NON ESISTE QUINDI REGISTRAZIONE")
+          console.log("PUBKEY PRE REST : "+ pubkey)
+          console.log("AAAAAAAAAAAAAAA")
+          const responseSolResp = await axios.post(variable["base-be-url"] + "/api/v2/register", {username, mail, descrizione, ruolo, password, pubkey });
+   
+          console.log("Phantom Wallet Registration Successful", responseSolResp.data);
+
+        }
+          else{
+          setErrorMessage("Login failed. Please try again.");
+        }
+      } catch (error) {
+        setErrorMessage("Phantom Wallet connection failed. Please try again.");
+        console.error(error);
+      }
+    } else {
+      setErrorMessage("Phantom Wallet not installed. Please install it and try again.");
+    }
+  };
 
   return (
     <>
@@ -89,6 +126,7 @@ function LoginPage() {
                   color: "white",
                   border: "2px solid blue",
                 }}
+                onClick={connectPhantomWallet}
               >
                 PHANTOM WALLET
               </Button>
