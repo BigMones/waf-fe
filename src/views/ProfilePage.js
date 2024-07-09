@@ -154,24 +154,47 @@ const preferencesData = [
 ];
 
 const ProfilePage = () => {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState({
+    name: null,
+    email: "",
+    regDate: "",
+    desc: "",
+    ruolo: "",
+    idFav: "",
+    isMvf: "",
+    pubKey: "",
+    mvfPos: "",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [id,setID]= useState(null);
+  const [id, setID] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
-
+    if (token) {
       const decoded = decodeToken(token);
-      setID(decoded.id);
+      setID(parseInt(decoded.id));
+    }
   }, []);
-console.log("ID: "+id)
+
   useEffect(() => {
     const fetchUserData = async () => {
+      if (id === null) return;
+
       try {
-      const response = await axios.post(variable["base-be-url"] + "/api/v2/user", {id});
-      console.log(response)
-        setUserData(response.data.rows[0]);
+        const response = await axios.post(variable["base-be-url"] + "/api/v2/user", { id });
+        const user = response.data.rows[0];
+        setUserData({
+          name: user.username,
+          email: user.mail,
+          regDate: user.regdate,
+          desc: user.descrizione,
+          ruolo: user.ruolo,
+          idFav: user.id_favourite,
+          isMvf: user.is_mvf,
+          pubKey: user.pubkey,
+          mvfPos: user.mvf_pos,
+        });
       } catch (err) {
         setError(err);
       } finally {
@@ -180,12 +203,14 @@ console.log("ID: "+id)
     };
 
     fetchUserData();
-  }, []);
+  }, [id]);
+
   if (loading) {
     return <p>Loading...</p>;
   }
 
   if (error) {
+    console.error(error);
     return <p>Error loading user data</p>;
   }
 
@@ -195,20 +220,20 @@ console.log("ID: "+id)
       <ProfileWrapper>
         <ProfileHeader>
           <UserInfo>
-            <UserName>{userData.username}</UserName>
+            <UserName>{userData.name}</UserName>
             <UserLevel>WAF LEVEL USERNAME/100</UserLevel>
           </UserInfo>
         </ProfileHeader>
         <ProfileContent>
           <ProfileLeft>
             <ProfileCard>
-              <ProfileImage  alt="Profile" />
+              <ProfileImage src="https://via.placeholder.com/150" alt="Profile" />
             </ProfileCard>
             <ProfileInfo>
-              <InfoTitle>ACCOUNT INFO: {userData.descrizione}</InfoTitle>
-              <InfoText>Login: USERNAME</InfoText>
+              <InfoTitle>ACCOUNT INFO: {userData.isMvf}</InfoTitle>
+              <InfoText>Login: {userData.pubKey}</InfoText>
               <InfoText>Abbonamento: USERNAME</InfoText>
-              <Textarea placeholder="Scrivi la tua bio..." rows="4" ></Textarea>
+              <Textarea placeholder="Scrivi la tua bio..." rows="4"></Textarea>
             </ProfileInfo>
           </ProfileLeft>
           <PersonalPreferences preferences={preferencesData} />

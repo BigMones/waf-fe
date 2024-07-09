@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import { decodeToken } from '../../utils/jwt'; // Import the decodeToken utility
+import variable from "../../assets/global/variable.json";
 
 const PreferencesWrapper = styled.div`
   background: #d9e1f2;
@@ -23,32 +26,73 @@ const PreferenceText = styled.p`
   margin: 0.5rem 0;
 `;
 
-const ProgressBarContainer = styled.div`
-  background: #fff;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-`;
+const PersonalPreferences = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [id_team, setID] = useState(null);
+  const [teamData, setTeamData] = useState({
+    nome: null,
+    id_campionato: "",
+    anno_creazione: "",
+    status: ""
+  });
 
-const ProgressBar = styled.div`
-  background: #4b00ff;
-  height: 10px;
-  width: ${props => props.width}%;
-  border-radius: 20px 0 0 20px;
-`;
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decoded = decodeToken(token);
+      setID(parseInt(decoded.id_favourite));
+    }
+  }, []);
 
-const PersonalPreferences = ({ preferences }) => (
-  <PreferencesWrapper>
-    <PreferenceTitle>PERSONAL PREFERENCES</PreferenceTitle>
-    {preferences.map(preference => (
-      <div key={preference.name}>
-        <PreferenceText>{preference.name}</PreferenceText>
-        <ProgressBarContainer>
-          <ProgressBar width={preference.level} />
-        </ProgressBarContainer>
-      </div>
-    ))}
+  useEffect(() => {
+    if (id_team === null) return;
+    const fetchPreferences = async () => {
+      try {
+        const response = await axios.post(variable["base-be-url"] + "/api/v2/fav_team", { id_team });
+        console.log("API Response:", response.data.rows[0]); 
+        console.log("API Response:", response.data.rows[0].nome); 
+        const team = response.data.rows[0];
+        console.log("Team Response:", team.nome); 
+        setTeamData({
+          nome: team.nome,
+          id_campionato: team.id_campionato,
+          anno_creazione: team.anno_creazione,
+          status: team.status,
+          nome_champ: team.nome_champ,
+          paese: team.paese
+        });
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPreferences();
+  }, [id_team]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading preferences: {error.message}</p>;
+  }
+
+  return (
+    <PreferencesWrapper>
+    <PreferenceTitle>SUPPORTED TEAM INFO</PreferenceTitle>
+    {teamData && (
+      <>
+        <PreferenceText>Team Name: {teamData.nome}</PreferenceText>
+        <PreferenceText>Championship Name: {teamData.nome_champ}, {teamData.paese}</PreferenceText>
+        <PreferenceText>Creation Year: {teamData.anno_creazione}</PreferenceText>
+        <PreferenceText>Status: {teamData.status}</PreferenceText>
+      </>
+    )}
   </PreferencesWrapper>
-);
+  );
+};
 
 export default PersonalPreferences;
