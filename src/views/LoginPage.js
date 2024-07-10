@@ -1,18 +1,42 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { Button, Input, Alert } from "reactstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import variable from "../assets/global/variable.json";
+
 
 function LoginPage() {
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confermapassword, setConfermaPassword] = useState('');
+  const [favTeam, setfavTeam] = useState('');
   const [mail, setMail] = useState('');
   const [descrizione, setDescrizione] = useState('');
   const [ruolo, setRuolo] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [teams, setTeams] = useState([]);
   const navigate = useNavigate();
+  // const SerieATeams = [
+  //   'AC Milan',
+  //   'AS Roma',
+  //   'Atalanta BC',
+  //   'Bologna FC',
+  //   'Cagliari Calcio',
+  //   'Empoli FC',
+  //   'FC Internazionale Milano',
+  //   'ACF Fiorentina',
+  //   'Genoa CFC',
+  //   'Hellas Verona FC',
+  //   'Juventus FC',
+  //   'SS Lazio',
+  //   'SSC Napoli',
+  //   'UC Sampdoria',
+  //   'Spezia Calcio',
+  //   'Torino FC',
+  //   'Udinese Calcio',
+  //   'US Salernitana 1919',
+  // ];
 
   const handleCreateAccountClick = () => {
     setShowCreateAccount(true);
@@ -86,6 +110,18 @@ function LoginPage() {
     }
   };
 
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get(variable["base-be-url"] + "/api/v2/all_team");
+        setTeams(response.data.rows); // Assuming response.data is an array of team names
+      } catch (error) {
+        setErrorMessage("Failed to fetch teams.");
+        console.error(error);
+      }
+    };
+    fetchTeams();
+  }, []);
   return (
     <>
       <div className="page-header">
@@ -131,7 +167,7 @@ function LoginPage() {
                 PHANTOM WALLET
               </Button>
 
-              <Button
+              {/* <Button
                 className="btn-round btn-block btn-lg second"
                 color="primary"
                 outline
@@ -142,7 +178,7 @@ function LoginPage() {
                 }}
               >
                 SOLFLARE WALLET
-              </Button>
+              </Button> */}
 
               {errorMessage && (
                 <Alert color="danger" style={{ width: "50%", margin: "0 auto 10px" }}>
@@ -220,9 +256,10 @@ function LoginPage() {
                   fontSize: "16px",
                   textAlign: "center",
                   outline: "none",
-                  width: "50%",
+                  width: "24%",
                   color: "white",
                   marginBottom: "10px",
+                  height: "50px"
                 }}
               />
               <Input
@@ -240,9 +277,10 @@ function LoginPage() {
                   fontSize: "16px",
                   textAlign: "center",
                   outline: "none",
-                  width: "50%",
+                  width: "24%",
                   color: "white",
                   marginBottom: "10px",
+                  height: "50px"
                 }}
               />
               <Input
@@ -263,6 +301,7 @@ function LoginPage() {
                   width: "50%",
                   color: "white",
                   marginBottom: "10px",
+                  height: "50px"
                 }}
               />
               <Input
@@ -283,6 +322,7 @@ function LoginPage() {
                   width: "50%",
                   color: "white",
                   marginBottom: "10px",
+                  height: "50px"
                 }}
               />
 
@@ -304,14 +344,15 @@ function LoginPage() {
                   width: "50%",
                   color: "white",
                   marginBottom: "10px",
+                  height: "50px"
                 }}
               />
 
               <Input
                 className="formnew6 input-white-placeholder"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={confermapassword}
+                onChange={(e) => setConfermaPassword(e.target.value)}
                 placeholder="Conferma Password"
                 style={{
                   backgroundColor: "black",
@@ -325,8 +366,47 @@ function LoginPage() {
                   width: "50%",
                   color: "white",
                   marginBottom: "10px",
+                  height: "50px"
                 }}
               />
+    <div>
+
+    </div>
+    <div class="dropdown">
+  <button class="dropbtn">Dropdown</button>
+  <div class="dropdown-content">
+      {teams && teams.map(item => (
+        <p key={item.id}>{item.name}</p>
+      ))}
+  </div>
+</div>
+<Input
+                className="formnew7 input-white-placeholder"
+                type="text"
+                value={favTeam}
+                onChange={(e) => setfavTeam(e.target.value)}
+                placeholder="Squadra del Cuore"
+                style={{
+                  backgroundColor: "black",
+                  placeholderTextColor: "white",
+                  border: "2px solid blue",
+                  borderRadius: "50px",
+                  padding: "16px 20px",
+                  fontSize: "16px",
+                  textAlign: "center",
+                  outline: "none",
+                  width: "50%",
+                  color: "white",
+                  marginBottom: "10px",
+                  height: "50px"
+                }}
+              />
+
+
+
+
+
+              
               <Button
                 className="btn-round btn-lg account2"
                 color="neutral"
@@ -366,4 +446,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default LoginPage;

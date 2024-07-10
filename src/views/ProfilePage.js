@@ -230,9 +230,10 @@ const ProfilePage = () => {
               <ProfileImage src="https://via.placeholder.com/150" alt="Profile" />
             </ProfileCard>
             <ProfileInfo>
-              <InfoTitle>ACCOUNT INFO: {userData.isMvf}</InfoTitle>
+              <InfoTitle>ACCOUNT INFO: {userData.isMvf === 0? "No MVF" : "MVF Mese Corrente"}</InfoTitle>
               <InfoText>Login: {userData.pubKey}</InfoText>
-              <InfoText>Abbonamento: USERNAME</InfoText>
+              <InfoText>Abbonamento: {userData.ruolo}</InfoText>
+              <InfoText>Bio Personale: {userData.descrizione}</InfoText>
               <Textarea placeholder="Scrivi la tua bio..." rows="4"></Textarea>
             </ProfileInfo>
           </ProfileLeft>
@@ -240,7 +241,7 @@ const ProfilePage = () => {
         </ProfileContent>
         <DailyUsageChart />
         <ButtonContainer>
-          <CancelButton>ANNULLA ABBONAMENTO</CancelButton>
+          <CancelButton>AGGIUNGI Phantom Wallet</CancelButton>
           <LogoutButton>LOGOUT</LogoutButton>
         </ButtonContainer>
       </ProfileWrapper>

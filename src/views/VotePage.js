@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import Header from '../components/HomePage/Header'; // Assicurati di importare il componente Header
 import Footer from '../components/HomePage/Footer'; // Assicurati di importare il componente Footer
-import player1 from '../assets/img/calc1.png'; // Assicurati di aggiornare il percorso
-import player2 from '../assets/img/calc2.png'; // Assicurati di aggiornare il percorso
 import logo from '../assets/img/logowaf.png';
+import variable from "../assets/global/variable.json";
+import { useNavigate } from 'react-router-dom';
+import { decodeToken } from '../utils/jwt'; // Import the decodeToken utility
+import { Link } from 'react-router-dom';
 
 const PageWrapper = styled.div`
   padding: 2rem;
@@ -64,6 +67,10 @@ const VoteImage = styled.img`
 `;
 
 const VoteLabel = styled.div`
+  padding: 1rem;
+  font-weight: bold;
+`;
+const VoteInfo = styled.div`
   padding: 1rem;
   font-weight: bold;
 `;
@@ -145,73 +152,94 @@ const DropdownCard = styled(StatCard)`
   flex-direction: column;
 `;
 
-const VotePage = () => (
-  <>
-    <Header />
-    <PageWrapper>
-      <HeaderSection>
-        <img src={logo} alt="Logo" style={{ width: '500px', height: 'auto'}} />
-        <MainTitle>SCEGLI IL TALENTO</MainTitle>
-        <Subtitle>Il Calciomercato dei tifosi</Subtitle>
-        <Description>Chi vorresti nella tua squadra?</Description>
-        <Description>
-          Per la prima volta nel mondo del calcio voi tifosi sceglierete e
-          finanzierete, in parte, il prossimo acquisto del Club. Grazie alla
-          blockchain in totale sicurezza e trasparenza, il ricavato dagli
-          abbonamenti di WAF sarà utilizzato per il calciomercato!
-        </Description>
-        <Description>Fai sentire la tua voce!</Description>
-      </HeaderSection>
-      <VoteSection>
-        <VoteCard>
-          <VoteImage src={player1} alt="Player 1" />
-          <VoteLabel>VOTA</VoteLabel>
-        </VoteCard>
-        <VoteCard>
-          <VoteImage src={player2} alt="Player 2" />
-          <VoteLabel>VOTA</VoteLabel>
-        </VoteCard>
-      </VoteSection>
-      <StatsSection>
-        <NewsCard>
-          <h4>NEWS :</h4>
-          <p>
-            Il 60% degli abbonati ha votato. Per il momento la scelta 2 prevale.
-            Hai ancora una settimana per lasciare il tuo voto.
-          </p>
-        </NewsCard>
-        <PercentageCard>
-          <StatValue>
-            <StatIcon>&#x2B06;</StatIcon> 40,5%
-          </StatValue>
-        </PercentageCard>
-      </StatsSection>
-      <LowerStatsSection>
-        <InsightCard>
-          <div>
-            <h4>Visualizza grafici</h4>
-            <p>Insight</p>
-          </div>
-          <div>...</div>
-        </InsightCard>
-        <StatCard>
-          <h4>Voto scelta 1</h4>
-          <StatValue>20%</StatValue>
-        </StatCard>
-        <StatCard>
-          <h4>Voto scelta 2</h4>
-          <StatValue>40%</StatValue>
-        </StatCard>
-        <DropdownCard>
-          <h4>Votazione in corso:</h4>
-          <p>Calciomercato</p>
-          <p>Design della divisa</p>
-          <p>Musica da stadio</p>
-        </DropdownCard>
-      </LowerStatsSection>
-    </PageWrapper>
-    <Footer />
-  </>
-);
+const VotePage = () => {
+  const [polls, setPolls] = useState([]);
+  const [id_team, setID] = useState(null)
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decoded = decodeToken(token);
+      setID(parseInt(decoded.id_favourite));
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      if (id_team === null) return;
+      try {
+        const response = await axios.post(variable["base-be-url"] + "/api/v2/poll_view", { id_team});
+        setPolls(response.data.rows);
+        console.log(response.data.rows)
+        console.log(polls) // Adjust the data path based on the response structure
+      } catch (error) {
+        console.error('Error fetching player data:', error);
+      }
+    };
+
+    fetchPlayers();
+  }, [id_team, polls]);
+ 
+  return (
+    <>
+      <Header />
+      <PageWrapper>
+        <HeaderSection>
+          <img src={logo} alt="Logo" style={{ width: '500px', height: 'auto' }} />
+          <MainTitle>SCEGLI IL TALENTO</MainTitle>
+          <Subtitle>Il Calciomercato dei tifosi</Subtitle>
+          <Description>Chi vorresti nella tua squadra?</Description>
+          <Description>
+            Per la prima volta nel mondo del calcio voi tifosi sceglierete e
+            finanzierete, in parte, il prossimo acquisto del Club. Grazie alla
+            blockchain in totale sicurezza e trasparenza, il ricavato dagli
+            abbonamenti di WAF sarà utilizzato per il calciomercato!
+          </Description>
+          <Description>Fai sentire la tua voce!</Description>
+        </HeaderSection>
+        <VoteSection>
+          {polls.map((poll) => (
+            <VoteCard key={poll.poll_name} >
+              <VoteInfo>{poll.poll_name}</VoteInfo>
+            <Link to={`/vote-page/${poll.id_vote}`}>DETTAGLI</Link>
+          </VoteCard>
+          ))}
+        </VoteSection>
+        <StatsSection>
+          <NewsCard>
+            <h4>NEWS :</h4>
+            <p>
+              Il 60% degli abbonati ha votato. Per il momento la scelta 2 prevale.
+              Hai ancora una settimana per lasciare il tuo voto.
+            </p>
+          </NewsCard>
+          <PercentageCard>
+            <StatValue>
+              <StatIcon>&#x2B06;</StatIcon> 40,5%
+            </StatValue>
+          </PercentageCard>
+        </StatsSection>
+        <LowerStatsSection>
+          <InsightCard>
+            <div>
+              <h4>Visualizza grafici</h4>
+              <p>Insight</p>
+            </div>
+            <div>...</div>
+          </InsightCard>
+          <DropdownCard>
+            <h4>Votazione in corso:</h4>
+            <p>Calciomercato</p>
+            <p>Design della divisa</p>
+            <p>Musica da stadio</p>
+          </DropdownCard>
+        </LowerStatsSection>
+      </PageWrapper>
+      <Footer />
+    </>
+  );
+};
 
 export default VotePage;
