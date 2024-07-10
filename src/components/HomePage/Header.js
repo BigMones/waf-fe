@@ -57,7 +57,9 @@ const LogoRightWrapper = styled.a`
 
 const Header = () => (
   <HeaderWrapper>
+    <Link to="/home-page">
     <Logo src={logoLeft} alt="Left Logo" />
+    </Link>
     <NavWrapper>
       <Nav>
       <Link to="/vote-page">
@@ -77,4 +79,4 @@ const Header = () => (
   </HeaderWrapper>
 );
 
-export default Header;
+export default Header;

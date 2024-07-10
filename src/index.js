@@ -15,7 +15,7 @@ import LoginPage from "./views/LoginPage.js";
 import HomePage from "./views/HomePage.js";
 import ProfilePage from "./views/ProfilePage.js";
 import VotePage from "./views/VotePage.js"
-
+import VoteDetails from "./views/VoteDetails.js"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -27,6 +27,8 @@ root.render(
       <Route path="/home-page" element={<HomePage />} />
       <Route path="/profile-page" element={<ProfilePage />} />
       <Route path="/vote-page" element={<VotePage />} />
+
+      <Route path="/vote-page/:id_vote" element={<VoteDetails />} />
 
       <Route path="*" element={<Navigate to="/index" replace />} />
     </Routes>

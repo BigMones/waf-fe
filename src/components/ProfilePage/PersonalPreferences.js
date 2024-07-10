@@ -31,10 +31,12 @@ const PersonalPreferences = () => {
   const [error, setError] = useState(null);
   const [id_team, setID] = useState(null);
   const [teamData, setTeamData] = useState({
-    nome: null,
+    nome: "",
     id_campionato: "",
     anno_creazione: "",
-    status: ""
+    status: "",
+    nome_champ:"",
+    paese:""
   });
 
   useEffect(() => {
@@ -45,13 +47,12 @@ const PersonalPreferences = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (id_team === null) return;
+  useEffect(() => { 
     const fetchPreferences = async () => {
+      if (id_team === null) return;
       try {
         const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/fav_team", { id_team });
         console.log("API Response:", response.data.rows[0]); 
-        console.log("API Response:", response.data.rows[0].nome); 
         const team = response.data.rows[0];
         console.log("Team Response:", team.nome); 
         setTeamData({

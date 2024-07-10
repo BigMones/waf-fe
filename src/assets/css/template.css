@@ -114,71 +114,84 @@
 }
 
 .btn-block.third {
-  top: 740px;
+  top: 610px;
   position: absolute;
   right: 850px;
   width: 50%;
 }
 
 .btn-round.account {
-  top: 910px;
+  top: 710px;
   position: absolute;
   right: 1030px;
   width: 50%;
 }
 .btn-round.account2 {
-  top: 910px;
+  top: 710px;
   position: absolute;
   right: 1230px;
   width: 50%;
 }
 
 .form{
-  top: 510px;
+  top: 410px;
   position: absolute;
   right: 850px;
 }
 
 .form2{
-  top: 610px;
+  top: 510px;
   position: absolute;
   right: 850px;
   
 }
 
 .formnew1{
-  top: 310px;
+  top: 200px;
   position: absolute;
-  right: 850px;
+  left: -180px;
   
 }
 
 .formnew2{
-  top: 410px;
+  top: 200px;
   position: absolute;
   right: 850px;
   
 }
 
 .formnew3{
-  top: 510px;
+  top: 280px;
   position: absolute;
   right: 850px;
 }
 .formnew4{
-  top: 610px;
+  top: 370px;
   position: absolute;
   right: 850px;
 }
 .formnew5{
-  top: 710px;
+  top: 570px;
   position: absolute;
   right: 850px;
 }
 .formnew6{
-  top: 810px;
+  top: 650px;
   position: absolute;
   right: 850px;
+}
+
+.formnew7{
+  top: 470px;
+  position: absolute;
+  right: 850px;
+}
+
+.dropdown-basic-button{
+  top: 580px;
+  position: absolute;
+  right: 850px;
+  width: 50px;
 }
 
 /* File: styles.css */
@@ -192,14 +205,5 @@
 }
 
 .input-white-placeholder::-ms-input-placeholder { /* Microsoft Edge */
-  color: white;
+  color: white;
 }
-
-
-
-
-
-
-
-
- 
