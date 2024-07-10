@@ -60,7 +60,7 @@ const PollDetails = () => {
     first_choice_votes: "",
     exp_poll: "",
   });
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchPollDetails = async () => {
       try {
@@ -88,31 +88,33 @@ const PollDetails = () => {
 
     fetchPollDetails();
   }, [id_vote]);
-console.log((pollDetails.first_choice_votes)++)
-console.log((pollDetails.second_choice_votes)++)
-console.log((pollDetails.total_votes)++)
+
   const handlefirstVote = async () => {
     try {
+        console.log((pollDetails.first_choice_votes)++)
+        console.log((pollDetails.total_votes)++)
       const response = await axios.put(variable["base-be-url"] + "/api/v2/vote_insert", {
         id_vote: pollDetails.id_vote,
         first_choice_votes: (pollDetails.first_choice_votes)++,
         total_votes: (pollDetails.total_votes)++
       });
       console.log('Vote successful:', response.data);
-      // Optionally update the state or UI based on the response
+      navigate("/vote-page");
     } catch (error) {
       console.error('Error updating vote:', error);
     }
   };
   const handlesecondtVote = async () => {
     try {
+        console.log((pollDetails.total_votes)++)
+        console.log((pollDetails.second_choice_votes)++)
       const response = await axios.put(variable["base-be-url"] + "/api/v2/vote_insert", {
         id_vote: pollDetails.id_vote,
         second_choice_votes: (pollDetails.second_choice_votes)++,
         total_votes: (pollDetails.total_votes)++
       });
       console.log('Vote successful:', response.data.rows);
-      // Optionally update the state or UI based on the response
+      navigate("/vote-page");
     } catch (error) {
       console.error('Error updating vote:', error);
     }
