@@ -1,4 +1,4 @@
 {
    "base-be-url":"http://localhost:3001",
-   "base-be-deploy-url":"https://waf-be.onrender.com/" 
+   "base-be-deploy-url":"https://waf-be.onrender.com" 
 }
