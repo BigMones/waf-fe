@@ -49,7 +49,7 @@ const PersonalPreferences = () => {
     if (id_team === null) return;
     const fetchPreferences = async () => {
       try {
-        const response = await axios.post(variable["base-be-url"] + "/api/v2/fav_team", { id_team });
+        const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/fav_team", { id_team });
         console.log("API Response:", response.data.rows[0]); 
         console.log("API Response:", response.data.rows[0].nome); 
         const team = response.data.rows[0];

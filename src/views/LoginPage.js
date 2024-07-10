@@ -19,7 +19,7 @@ function LoginPage() {
   };
   const loginCheck = async () => {
     try {
-      const response = await axios.post(variable["base-be-url"] + "/api/v2/login", { username, password });
+      const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/login", { username, password });
       if (response.status === 200 && response.data.rowCount === 1) {
         console.log("Login Successful", response.data);
         localStorage.setItem('jwtToken', response.data.rows[0].token);
@@ -35,10 +35,10 @@ function LoginPage() {
 
   const registerAccount = async () => {
     try {
-      const response = await axios.post(variable["base-be-url"] + "/api/v2/register", { username, mail, descrizione, ruolo, password });
+      const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/register", { username, mail, descrizione, ruolo, password });
       if (response.status === 200 && response.data.rowCount === 1) {
         console.log("Registrazione avvenuta con successo", response.data);
-        navigate("/home-page");
+        navigate("/login-page");
       } else {
         setErrorMessage("Uno o più parametri sono errati.");
       }
@@ -56,7 +56,7 @@ function LoginPage() {
         console.log("Connected with public key:", pubkey);
 
         // Perform login or registration using the public key
-        const loginResponse = await axios.post(variable["base-be-url"] + "/api/v2/login", { pubkey });
+        const loginResponse = await axios.post(variable["base-be-deploy-url"] + "/api/v2/login", { pubkey });
         console.log("PRE LOGIN")
         if (loginResponse.status === 200 && loginResponse.data.rowCount === 1) {
           const token = loginResponse.data.rows[0].token;
@@ -69,7 +69,7 @@ function LoginPage() {
           console.log("LOGIN SE PUB KEY NON ESISTE QUINDI REGISTRAZIONE")
           console.log("PUBKEY PRE REST : "+ pubkey)
           console.log("AAAAAAAAAAAAAAA")
-          const responseSolResp = await axios.post(variable["base-be-url"] + "/api/v2/register", {username, mail, descrizione, ruolo, password, pubkey });
+          const responseSolResp = await axios.post(variable["base-be-deploy-url"] + "/api/v2/register", {username, mail, descrizione, ruolo, password, pubkey });
    
           console.log("Phantom Wallet Registration Successful", responseSolResp.data);
 

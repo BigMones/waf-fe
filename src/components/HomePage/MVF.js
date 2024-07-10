@@ -108,7 +108,7 @@ const MVF = () => {
   useEffect(() => {
     const fetchWinners = async () => {
       try {
-        const response = await axios.get(variable["base-be-url"] + "/api/v2/waf_table"); 
+        const response = await axios.get(variable["base-be-deploy-url"] + "/api/v2/waf_table"); 
         console.log(response.data.rows)
         const { first, second, third } = response.data.rows[0].username;
   

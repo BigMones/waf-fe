@@ -182,7 +182,7 @@ const ProfilePage = () => {
       if (id === null) return;
 
       try {
-        const response = await axios.post(variable["base-be-url"] + "/api/v2/user", { id });
+        const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/user", { id });
         const user = response.data.rows[0];
         setUserData({
           name: user.username,
