@@ -122,7 +122,7 @@ function LoginPage() {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await axios.get(variable["base-be-deploy-urll"] + "/api/v2/all_team");
+        const response = await axios.get(variable["base-be-deploy-url"] + "/api/v2/all_team");
         setTeams(response.data.rows);
         console.log(response.data.rows);
       } catch (error) {
