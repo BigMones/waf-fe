@@ -170,7 +170,7 @@ const VotePage = () => {
     const fetchPlayers = async () => {
       if (id_team === null) return;
       try {
-        const response = await axios.post(variable["base-be-url"] + "/api/v2/poll_view", { id_team});
+        const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/poll_view", { id_team});
         setPolls(response.data.rows);
         console.log(response.data.rows)
         console.log(polls) // Adjust the data path based on the response structure

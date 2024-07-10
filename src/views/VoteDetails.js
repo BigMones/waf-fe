@@ -64,7 +64,7 @@ const PollDetails = () => {
   useEffect(() => {
     const fetchPollDetails = async () => {
       try {
-        const response = await axios.post(variable["base-be-url"] + "/api/v2/poll_details", { id_vote });
+        const response = await axios.post(variable["base-be-deploy-url"] + "/api/v2/poll_details", { id_vote });
         const details = response.data.rows[0];
         
         setPollDetails({
@@ -93,7 +93,7 @@ const PollDetails = () => {
     try {
         console.log((pollDetails.first_choice_votes)++)
         console.log((pollDetails.total_votes)++)
-      const response = await axios.put(variable["base-be-url"] + "/api/v2/vote_insert", {
+      const response = await axios.put(variable["base-be-deploy-url"] + "/api/v2/vote_insert", {
         id_vote: pollDetails.id_vote,
         first_choice_votes: (pollDetails.first_choice_votes)++,
         total_votes: (pollDetails.total_votes)++
@@ -108,7 +108,7 @@ const PollDetails = () => {
     try {
         console.log((pollDetails.total_votes)++)
         console.log((pollDetails.second_choice_votes)++)
-      const response = await axios.put(variable["base-be-url"] + "/api/v2/vote_insert", {
+      const response = await axios.put(variable["base-be-deploy-url"] + "/api/v2/vote_insert", {
         id_vote: pollDetails.id_vote,
         second_choice_votes: (pollDetails.second_choice_votes)++,
         total_votes: (pollDetails.total_votes)++
