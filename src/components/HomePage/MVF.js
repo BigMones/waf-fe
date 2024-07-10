@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import variable from "../../assets/global/variable.json";
 
 const MVFWrapper = styled.section`
   padding: 2rem;
@@ -23,7 +25,7 @@ const MVFBody = styled.div`
 const MVFTextWrapper = styled.div`
   max-width: 50%;
   text-align: left;
-  padding-right: 2rem; /* Aggiunge padding a destra per bilanciare */
+  padding-right: 2rem;
 `;
 
 const MVFSubtitle = styled.h3`
@@ -44,7 +46,7 @@ const MVFGrid = styled.div`
   align-items: center;
   gap: 1rem;
   max-width: 40rem;
-  padding-left: 2rem; /* Aggiunge padding a sinistra per bilanciare */
+  padding-left: 2rem;
 `;
 
 const MVFTop = styled.div`
@@ -94,35 +96,76 @@ const MVFItem = ({ position, name, icon }) => (
   </MVFItemWrapper>
 );
 
-const MVF = () => (
-  <MVFWrapper>
-    <MVFHeader>
-      <MVFTitle>Tifoso del mese - MVF (Most Valuable Fan)</MVFTitle>
-    </MVFHeader>
-    <MVFBody>
-      <MVFTextWrapper>
-        <MVFSubtitle>È tempo di premi!</MVFSubtitle>
-        <MVFText>
-          Ogni mese verranno premiati i 3 tifosi più fedeli, ovvero i 3 fans che
-          avranno nel loro account WAF più punti fedeltà. Come raccogli punti?
-          Semplice, usando WAF! Partecipa alle votazioni, vivi le fantastiche
-          esperienze disponibili, acquista le limited edition e prova a vincere i
-          premi messi in palio dalla tua squadra del cuore!
-        </MVFText>
-      </MVFTextWrapper>
-      <MVFGrid>
-        <MVFTop>
-          <MVFTopTitle>2024</MVFTopTitle>
-          <MVFTopTitle>SETTEMBRE</MVFTopTitle>
-        </MVFTop>
-        <MVFGridItems>
-          <MVFItem position="1° POSTO" name="Laura Rossi" icon="🥇" />
-          <MVFItem position="2° POSTO" name="Paolo Esposito" icon="🥈" />
-          <MVFItem position="3° POSTO" name="Davide Costa" icon="🥉" />
-        </MVFGridItems>
-      </MVFGrid>
-    </MVFBody>
-  </MVFWrapper>
-);
+const MVF = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [winners, setWinners] = useState({
+    first: { username: "", icon: "🥇" },
+    second: { username: "", icon: "🥈" },
+    third: { username: "", icon: "🥉" }
+  });
+
+  useEffect(() => {
+    const fetchWinners = async () => {
+      try {
+        const response = await axios.get(variable["base-be-url"] + "/api/v2/waf_table"); 
+        console.log(response.data.rows)
+        const { first, second, third } = response.data.rows[0].username;
+  
+        setWinners({
+          first: { username: response.data.rows[0].username, icon: "🥇" },
+          second: { username: response.data.rows[1].username, icon: "🥈" },
+          third: { username: response.data.rows[2].username, icon: "🥉" }
+        });
+        console.log(winners.first)
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWinners();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading MVF winners: {error.message}</p>;
+  }
+
+  return (
+    <MVFWrapper>
+      <MVFHeader>
+        <MVFTitle>Tifoso del mese - MVF (Most Valuable Fan)</MVFTitle>
+      </MVFHeader>
+      <MVFBody>
+        <MVFTextWrapper>
+          <MVFSubtitle>È tempo di premi!</MVFSubtitle>
+          <MVFText>
+            Ogni mese verranno premiati i 3 tifosi più fedeli, ovvero i 3 fans che
+            avranno nel loro account WAF più punti fedeltà. Come raccogli punti?
+            Semplice, usando WAF! Partecipa alle votazioni, vivi le fantastiche
+            esperienze disponibili, acquista le limited edition e prova a vincere i
+            premi messi in palio dalla tua squadra del cuore!
+          </MVFText>
+        </MVFTextWrapper>
+        <MVFGrid>
+          <MVFTop>
+            <MVFTopTitle>2024</MVFTopTitle>
+            <MVFTopTitle>SETTEMBRE</MVFTopTitle>
+          </MVFTop>
+          <MVFGridItems>
+            <MVFItem position="1° POSTO" name={winners.first.username} icon={winners.first.icon} />
+            <MVFItem position="2° POSTO" name={winners.second.username} icon={winners.second.icon} />
+            <MVFItem position="3° POSTO" name={winners.third.username} icon={winners.third.icon} />
+          </MVFGridItems>
+        </MVFGrid>
+      </MVFBody>
+    </MVFWrapper>
+  );
+};
 
 export default MVF;

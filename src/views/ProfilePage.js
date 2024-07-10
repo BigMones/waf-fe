@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import Header from '../components/HomePage/Header'; // Assicurati di importare il componente Header
 import logo from '../assets/img/logowaf.png'; // Assicurati di aggiornare il percorso
 import Footer from '../components/HomePage/Footer.js';
 import DailyUsageChart from '../components/ProfilePage/DailyUsageChart'; // Assicurati di aggiornare il percorso
 import PersonalPreferences from '../components/ProfilePage/PersonalPreferences'; // Assicurati di aggiornare il percorso
+import { decodeToken } from '../utils/jwt'; // Import the decodeToken utility
+import variable from "../assets/global/variable.json";
 
 const ProfileWrapper = styled.div`
   padding: 2rem;
@@ -150,40 +153,100 @@ const preferencesData = [
   { name: 'Acquisti online', level: 90 },
 ];
 
-const ProfilePage = () => (
-  <>
-    <Header />
-    <ProfileWrapper>
-      <ProfileHeader>
-        <UserInfo>
-          <UserName>LAURA ROSSI</UserName>
-          <UserLevel>WAF LEVEL 70/100</UserLevel>
-        </UserInfo>
-        <Logo src={logo} alt="Logo" />
-      </ProfileHeader>
-      <ProfileContent>
-        <ProfileLeft>
-          <ProfileCard>
-            <ProfileImage src="https://via.placeholder.com/150" alt="Profile" />
-          </ProfileCard>
-          <ProfileInfo>
-            <InfoTitle>ACCOUNT INFO</InfoTitle>
-            <InfoText>Age range: 20-30</InfoText>
-            <InfoText>Login: Web 3</InfoText>
-            <InfoText>Abbonamento: Premium</InfoText>
-            <Textarea placeholder="Scrivi la tua bio..." rows="4"></Textarea>
-          </ProfileInfo>
-        </ProfileLeft>
-        <PersonalPreferences preferences={preferencesData} />
-      </ProfileContent>
-      <DailyUsageChart />
-      <ButtonContainer>
-        <CancelButton>ANNULLA ABBONAMENTO</CancelButton>
-        <LogoutButton>LOGOUT</LogoutButton>
-      </ButtonContainer>
-    </ProfileWrapper>
-    <Footer />
-  </>
-);
+const ProfilePage = () => {
+  const [userData, setUserData] = useState({
+    name: null,
+    email: "",
+    regDate: "",
+    desc: "",
+    ruolo: "",
+    idFav: "",
+    isMvf: "",
+    pubKey: "",
+    mvfPos: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [id, setID] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decoded = decodeToken(token);
+      setID(parseInt(decoded.id));
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (id === null) return;
+
+      try {
+        const response = await axios.post(variable["base-be-url"] + "/api/v2/user", { id });
+        const user = response.data.rows[0];
+        setUserData({
+          name: user.username,
+          email: user.mail,
+          regDate: user.regdate,
+          desc: user.descrizione,
+          ruolo: user.ruolo,
+          idFav: user.id_favourite,
+          isMvf: user.is_mvf,
+          pubKey: user.pubkey,
+          mvfPos: user.mvf_pos,
+        });
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [id]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    console.error(error);
+    return <p>Error loading user data</p>;
+  }
+
+  return (
+    <>
+      <Header />
+      <ProfileWrapper>
+        <ProfileHeader>
+          <UserInfo>
+            <UserName>{userData.name}</UserName>
+            <UserLevel>WAF LEVEL USERNAME/100</UserLevel>
+          </UserInfo>
+        </ProfileHeader>
+        <ProfileContent>
+          <ProfileLeft>
+            <ProfileCard>
+              <ProfileImage src="https://via.placeholder.com/150" alt="Profile" />
+            </ProfileCard>
+            <ProfileInfo>
+              <InfoTitle>ACCOUNT INFO: {userData.isMvf}</InfoTitle>
+              <InfoText>Login: {userData.pubKey}</InfoText>
+              <InfoText>Abbonamento: USERNAME</InfoText>
+              <Textarea placeholder="Scrivi la tua bio..." rows="4"></Textarea>
+            </ProfileInfo>
+          </ProfileLeft>
+          <PersonalPreferences preferences={preferencesData} />
+        </ProfileContent>
+        <DailyUsageChart />
+        <ButtonContainer>
+          <CancelButton>ANNULLA ABBONAMENTO</CancelButton>
+          <LogoutButton>LOGOUT</LogoutButton>
+        </ButtonContainer>
+      </ProfileWrapper>
+      <Footer />
+    </>
+  );
+};
 
 export default ProfilePage;
