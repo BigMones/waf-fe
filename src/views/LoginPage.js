@@ -38,7 +38,7 @@ function LoginPage() {
       const response = await axios.post(variable["base-be-url"] + "/api/v2/register", { username, mail, descrizione, ruolo, password });
       if (response.status === 200 && response.data.rowCount === 1) {
         console.log("Registrazione avvenuta con successo", response.data);
-        navigate("/home-page");
+        navigate("/");
       } else {
         setErrorMessage("Uno o più parametri sono errati.");
       }
